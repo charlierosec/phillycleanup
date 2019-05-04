@@ -1,14 +1,15 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using DefaultNamespace;
 using UnityEngine;
 
 public class Lexer
 {
-    private string Source { get; set; }
     private Dictionary<string, Token.TokenType> Keywords;
 
+    public string Source { get; set; }
     public int Start;
     public int Current;
     public List<Token> Tokens;
@@ -19,6 +20,8 @@ public class Lexer
 
         Start = 0;
         Current = 0;
+
+        Tokens = new List<Token>();
         
         // add keywords
         Keywords = new Dictionary<string, Token.TokenType>();
@@ -36,17 +39,23 @@ public class Lexer
         {
             NUMBER, IDENTIFIER,
             PLUS, MINUS, MULTIPLY, DIVIDE,
+            EQUAL,
             
             REPEAT, COLON, IF, ELSE, 
             HASH, MACRO, EOF, DO, ENDM
         };
 
-        public TokenType type;
-        public System.Object value;
-        public string literal;
+        public TokenType Type;
+        public System.Object Value;
+        public string Literal;
+
+        public string ToString()
+        {
+            return $"Token [{Type}]: {Literal}";
+        }
     }
 
-    public void Scan()
+    public List<Token> Scan()
     {
         while (!isAtEnd())
         {
@@ -55,6 +64,7 @@ public class Lexer
         }
         
         addToken(Token.TokenType.EOF, "");
+        return Tokens;
     }
 
     void scanToken()
@@ -95,6 +105,10 @@ public class Lexer
                 addToken(Token.TokenType.COLON, ":");
                 break;
             
+            case '=':
+                addToken(Token.TokenType.EQUAL, "=");
+                break;
+            
             default:
                 if (isDigit(c))
                 {
@@ -113,7 +127,7 @@ public class Lexer
 
     void addToken(Token.TokenType toAdd, string lit, System.Object val = null)
     {
-        Tokens.Add(new Token{type = toAdd, value = val, literal = lit});
+        Tokens.Add(new Token{Type = toAdd, Value = val, Literal = lit});
     }
 
     void number()
@@ -123,17 +137,19 @@ public class Lexer
             advance();
         }
         
-        addToken(Token.TokenType.NUMBER, Source.Substring(Start, Current));
+        addToken(Token.TokenType.NUMBER, Source.Substring(Start, Current - Start));
     }
 
     void identifier()
     {
-        while (isAlpha(peek()) || isDigit(peek()))
+        var c = peek();
+        while (isAlphaNumeric(c))
         {
             advance();
+            c = peek();
         }
 
-        string text = Source.Substring(Start, Current);
+        string text = Source.Substring(Start, Current - Start);
         if (Keywords.ContainsKey(text))
         {
             addToken(Keywords[text], text);
@@ -146,18 +162,17 @@ public class Lexer
 
     char advance()
     {
-        Current += 1;
-        return Source[Current - 1];
+        return Source[Current++];
     }
 
     char peek()
     {
-        if (Current + 1 >= Source.Length)
+        if (isAtEnd())
         {
             return '\0';
         }
 
-        return Source[Current + 1];
+        return Source[Current];
     }
 
     bool isDigit(char c)
@@ -167,7 +182,12 @@ public class Lexer
 
     bool isAlpha(char c)
     {
-        return ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'));
+        return ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c == '_'));
+    }
+
+    bool isAlphaNumeric(char c)
+    {
+        return isDigit(c) || isAlpha(c);
     }
 
     bool isAtEnd()

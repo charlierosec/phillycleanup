@@ -51,17 +51,19 @@ public class TrashMan : MonoBehaviour
         {
             case "up":
                 move.y += 1;
-                ExpressionManager.Execute("let play = GetPlayer()");
+                var lx = new Lexer("let x = 5");
+                foreach (var l in lx.Scan())
+                {
+                    print(l.ToString());
+                }
                 break;
             
             case "down":
                 move.y -= 1;
-                ExpressionManager.Execute("let x = 5");
                 break;
             
             case "right":
                 move.x += 1;
-                ExpressionManager.Execute("print x");
                 break;
             
             case "left":
