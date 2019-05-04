@@ -1,18 +1,31 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class TrashMan : MonoBehaviour
 {
+    
+    private int score { get; set; }
+    private int ds;
+    
     // Start is called before the first frame update
     void Start()
     {
-        
+        score = 0;
+        ds = 0;
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (ds != score)
+        {
+            print($"New score {score}!");
+        }
+        
+        ds = score;
+        
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
             Move("up");
@@ -52,5 +65,10 @@ public class TrashMan : MonoBehaviour
         }
 
         this.transform.position = move;
+    }
+
+    public void AddScore(int points)
+    {
+        score += points;
     }
 }
