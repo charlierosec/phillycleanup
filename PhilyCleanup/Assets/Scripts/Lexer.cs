@@ -138,6 +138,10 @@ public class Lexer
         {
             addToken(Keywords[text], text);
         }
+        else
+        {
+            addToken(Token.TokenType.IDENTIFIER, text);
+        }
     }
 
     char advance()
