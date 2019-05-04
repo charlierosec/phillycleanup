@@ -8,6 +8,8 @@ public class TrashMan : MonoBehaviour
     
     private int score { get; set; }
     private int ds;
+
+    public Expression ExpressionManager;
     
     // Start is called before the first frame update
     void Start()
@@ -49,14 +51,17 @@ public class TrashMan : MonoBehaviour
         {
             case "up":
                 move.y += 1;
+                ExpressionManager.Execute("let play = GetPlayer()");
                 break;
             
             case "down":
                 move.y -= 1;
+                ExpressionManager.Execute("let x = 5");
                 break;
             
             case "right":
                 move.x += 1;
+                ExpressionManager.Execute("print x");
                 break;
             
             case "left":
