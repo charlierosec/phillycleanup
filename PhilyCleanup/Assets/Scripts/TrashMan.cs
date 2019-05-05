@@ -5,7 +5,9 @@ using UnityEngine;
 
 public class TrashMan : MonoBehaviour
 {
-    
+	public int speed;
+	public int cost;
+	public int energy;
     private int score { get; set; }
     private int ds;
 
@@ -29,31 +31,40 @@ public class TrashMan : MonoBehaviour
         ds = score;
     }
 
-    public void Move(string direction)
-    {
-        var move = this.transform.position;
-        
-        switch (direction)
-        {
-            case "up":
-                move.y += 1;
-                break;
-            
-            case "down":
-                move.y -= 1;
-                break;
-            
-            case "right":
-                move.x += 1;
-                break;
-            
-            case "left":
-                move.x -= 1;
-                break;
-        }
+	public void Move(string direction)
+	{
+		int true_cost = cost - speed;
+		if (energy < true_cost)
+		{
+			EventManager.OnGameOver();
+		}
+		else
+		{
+			var move = this.transform.position;
 
-        this.transform.position = move;
-    }
+			switch (direction)
+			{
+				case "up":
+					move.y += 1;
+					break;
+
+				case "down":
+					move.y -= 1;
+					break;
+
+				case "right":
+					move.x += 1;
+					break;
+
+				case "left":
+					move.x -= 1;
+					break;
+			}
+
+			this.transform.position = move;
+			energy -= true_cost;
+		}
+	}
 
     public void AddScore(int points)
     {
