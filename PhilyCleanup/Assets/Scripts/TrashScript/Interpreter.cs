@@ -119,7 +119,19 @@ public class Interpreter : Expr.Visitor<System.Object>, Stmt.Visitor<string> // 
         // we've got ourselves a low-high expression bois
         if (stmt.LowValue != null)
         {
+            var low = evaluate(stmt.LowValue);
+            var high = evaluate(stmt.HighValue);
+            if (low is int && high is int)
+            {
+                for (int i = (int) low; i <= (int) high; ++i)
+                {
+                    execute(stmt.Block);
+                }
+            }
+            
+            throw new RuntimeError("Invalid values for repeat loop");
         }
+        
         throw new NotImplementedException();
     }
 

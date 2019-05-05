@@ -98,6 +98,12 @@ public class Lexer
                 break;
             
             case '\n':
+                // crush empty lines down to one new line
+                while (peek() == '\n')
+                {
+                    advance();
+                }
+                
                 addToken(Token.TokenType.NEWLINE, "\n");
                 break;
             

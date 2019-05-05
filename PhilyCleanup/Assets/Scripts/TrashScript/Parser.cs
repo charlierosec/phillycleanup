@@ -74,6 +74,9 @@ public class Parser
 
     List<Stmt> block()
     {
+        // should get rid of pesky newlines?
+        while (match(Lexer.Token.TokenType.NEWLINE)) {}
+        
         List<Stmt> statements = new List<Stmt>();
 
         while (!check(Lexer.Token.TokenType.END) && !isAtEnd())
@@ -108,16 +111,15 @@ public class Parser
         consume("Expected ':' in repeat", Lexer.Token.TokenType.COLON); 
         Expr right = expression();
 
-        Stmt.Block blk = new Stmt.Block(block());
+        Stmt.Block blk = null;
+        if (match(Lexer.Token.TokenType.DO)) blk = new Stmt.Block(block());
+        else throw new ParseError("Expected block after repeat statement");
         
         return new Stmt.Repeat(left, right, blk);
     }
 
     Expr expression()
     {
-        if (match(Lexer.Token.TokenType.LEFT_PAREN)) return grouping();
-        if (match(Lexer.Token.TokenType.MINUS, Lexer.Token.TokenType.BANG)) return unary();
-
         return addition();
     }
 

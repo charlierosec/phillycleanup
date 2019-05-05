@@ -25,6 +25,12 @@ public class CodeInput : MonoBehaviour
 	public void HandleButtonClick()
 	{
 		print(inputField.text);
+        var lx = new Lexer(inputField.text);
+        var pr = new Parser(lx.Scan());
+        var it = new Interpreter();
+        var parsed = pr.Parse();
+        it.Interpret(parsed);
+        print(it.IntEnvironment.Get(new Lexer.Token{Literal="x"}));
 	}
     // Update is called once per frame
     void Update()
