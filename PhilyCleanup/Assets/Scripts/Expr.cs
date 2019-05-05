@@ -5,28 +5,10 @@ public abstract class Expr
 {
     public interface Visitor<R>
     {
-        R VisitAssignExpr(Assign expr);
         R VisitBinaryExpr(Binary expr);
         R VisitGroupingExpr(Grouping expr);
         R VisitUnaryExpr(Unary expr);
         R VisitVariableExpr(Variable expr);
-    }
-
-    public class Assign : Expr
-    {
-        public Lexer.Token Name;
-        public Expr Value;
-
-        public Assign(Lexer.Token name, Expr value)
-        {
-            this.Name = name;
-            this.Value = value;
-        }
-
-        public R Accept<R>(Visitor<R> visitor)
-        {
-            return visitor.VisitAssignExpr(this);
-        }
     }
 
     public class Binary : Expr
@@ -42,7 +24,7 @@ public abstract class Expr
             this.Right = right;
         }
 
-        R Accept<R>(Visitor<R> visitor)
+        public override R Accept<R>(Visitor<R> visitor)
         {
             return visitor.VisitBinaryExpr(this);
         }
@@ -57,7 +39,7 @@ public abstract class Expr
             this.Expression = expression;
         }
 
-        public R Accept<R>(Visitor<R> visitor)
+        public override R Accept<R>(Visitor<R> visitor)
         {
             return visitor.VisitGroupingExpr(this);
         }
@@ -74,7 +56,7 @@ public abstract class Expr
             this.Right = right;
         }
 
-        R Accept<R>(Visitor<R> visitor)
+        public override R Accept<R>(Visitor<R> visitor)
         {
             return visitor.VisitUnaryExpr(this);
         }
@@ -89,9 +71,11 @@ public abstract class Expr
             this.Name = name;
         }
 
-        public R Accept<R>(Visitor<R> visitor)
+        public override R Accept<R>(Visitor<R> visitor)
         {
             return visitor.VisitVariableExpr(this);
         }
     }
+
+    public abstract R Accept<R>(Visitor<R> visitor);
 }
