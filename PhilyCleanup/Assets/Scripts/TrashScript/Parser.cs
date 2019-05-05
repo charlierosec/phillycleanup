@@ -61,6 +61,7 @@ public class Parser
             if (match(Lexer.Token.TokenType.REPEAT)) return repeat();
             if (match(Lexer.Token.TokenType.PLAYER)) return dotted();
             if (match(Lexer.Token.TokenType.IF)) return ifstmt();
+            if (match(Lexer.Token.TokenType.NEWLINE)) return null; // kill any newlines
 
             return new Stmt.Expression(condition());
         }

@@ -29,8 +29,8 @@ public class CodeInput : MonoBehaviour
         var pr = new Parser(lx.Scan());
         var it = new Interpreter();
         var parsed = pr.Parse();
-        it.Interpret(parsed);
-        print(it.IntEnvironment.Get(new Lexer.Token{Literal="x"}));
+        if (pr.Errors.Count == 0)
+			it.Interpret(parsed);
 	}
     // Update is called once per frame
     void Update()

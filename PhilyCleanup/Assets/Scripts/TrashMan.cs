@@ -27,20 +27,6 @@ public class TrashMan : MonoBehaviour
         }
         
         ds = score;
-        
-        if (Input.GetKeyDown(KeyCode.UpArrow))
-        {
-            Move("up");
-        } else if (Input.GetKeyDown(KeyCode.DownArrow))
-        {
-            Move("down");    
-        } else if (Input.GetKeyDown(KeyCode.LeftArrow))
-        {
-            Move("left");
-        } else if (Input.GetKeyDown(KeyCode.RightArrow))
-        {
-            Move("right");
-        }
     }
 
     public void Move(string direction)

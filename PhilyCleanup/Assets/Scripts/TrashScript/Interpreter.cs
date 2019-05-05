@@ -148,6 +148,8 @@ public class Interpreter : Expr.Visitor<System.Object>, Stmt.Visitor<string> // 
                 {
                     execute(stmt.Block);
                 }
+
+                return "";
             }
             
             throw new RuntimeError("Invalid values for repeat loop");
@@ -219,7 +221,12 @@ public class Interpreter : Expr.Visitor<System.Object>, Stmt.Visitor<string> // 
             if ((bool) cond)
             {
                 execute(stmt.WhenTrue);
-            } else execute(stmt.WhenFalse);
+            } else if (stmt.WhenFalse != null)
+            {
+                execute(stmt.WhenFalse);
+            }
+
+            return "";
         }
         
         throw new RuntimeError("If statement condition not a boolean value");
