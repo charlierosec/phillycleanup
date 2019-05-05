@@ -9,7 +9,7 @@ public class TrashMan : MonoBehaviour
     private int score { get; set; }
     private int ds;
 
-    public Expression ExpressionManager;
+    public Evaluator ExpressionManager;
     
     // Start is called before the first frame update
     void Start()

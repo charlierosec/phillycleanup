@@ -6,7 +6,7 @@ using UnityEditor.UIElements;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-public class Expression : MonoBehaviour
+public class Evaluator : MonoBehaviour
 {
     public Dictionary<string, System.Object> Environment;
     public TrashMan Player;

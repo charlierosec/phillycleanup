@@ -2,11 +2,18 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using DefaultNamespace;
 using UnityEngine;
 
 public class Lexer
 {
+    public class ScanError : Exception
+    {
+        public ScanError(string msg) : base(msg)
+        {
+            
+        }
+    }
+
     private Dictionary<string, Token.TokenType> Keywords;
 
     public string Source { get; set; }
@@ -26,11 +33,12 @@ public class Lexer
         // add keywords
         Keywords = new Dictionary<string, Token.TokenType>();
             Keywords.Add("repeat", Token.TokenType.REPEAT);
+            Keywords.Add("let", Token.TokenType.LET);
             Keywords.Add("if", Token.TokenType.IF);
             Keywords.Add("else", Token.TokenType.ELSE);
             Keywords.Add("macro", Token.TokenType.MACRO);
             Keywords.Add("do", Token.TokenType.DO);
-            Keywords.Add("endm", Token.TokenType.ENDM);
+            Keywords.Add("end", Token.TokenType.END);
     }
     
     public class Token
@@ -39,10 +47,12 @@ public class Lexer
         {
             NUMBER, IDENTIFIER,
             PLUS, MINUS, MULTIPLY, DIVIDE,
-            EQUAL,
+            EQUAL, LEFT_PAREN, RIGHT_PAREN,
+            BANG,
             
             REPEAT, COLON, IF, ELSE, 
-            HASH, MACRO, EOF, DO, ENDM
+            HASH, MACRO, EOF, DO, END,
+            LET, NEWLINE
         };
 
         public TokenType Type;
@@ -77,7 +87,10 @@ public class Lexer
             case ' ':
             case '\r':
             case '\t':
+                break;
+            
             case '\n':
+                addToken(Token.TokenType.NEWLINE, "\n");
                 break;
             
             // single character tokens
