@@ -61,6 +61,7 @@ public class Parser
             if (match(Lexer.Token.TokenType.REPEAT)) return repeat();
             if (match(Lexer.Token.TokenType.PLAYER)) return dotted();
             if (match(Lexer.Token.TokenType.IF)) return ifstmt();
+            if (match(Lexer.Token.TokenType.MACRO)) return macro();
             if (match(Lexer.Token.TokenType.NEWLINE)) return null; // kill any newlines
 
             return new Stmt.Expression(condition());
@@ -171,6 +172,16 @@ public class Parser
         }
         
         return new Stmt.If(cond, new Stmt.Block(blk), (blk2 != null) ? new Stmt.Block(blk2) : null);
+    }
+
+    Stmt macro()
+    {
+        consume("Expected identifier after macro definition", Lexer.Token.TokenType.IDENTIFIER);
+        var id = previous();
+        
+        consume("Expected block after macro identifier", Lexer.Token.TokenType.DO);
+        
+        return new Stmt.Macro(id, new Stmt.Block(block()));
     }
 
     Expr condition()

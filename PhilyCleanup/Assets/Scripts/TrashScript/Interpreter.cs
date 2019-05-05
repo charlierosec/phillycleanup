@@ -12,6 +12,7 @@ public class Interpreter : Expr.Visitor<System.Object>, Stmt.Visitor<string> // 
     }
     
     public Environment IntEnvironment = new Environment();
+    public Environment Macros = new Environment();
     public UnityEngine.Object Player;
 
     public void Interpret(List<Stmt> statements)
@@ -99,6 +100,12 @@ public class Interpreter : Expr.Visitor<System.Object>, Stmt.Visitor<string> // 
 
     public object VisitVariableExpr(Expr.Variable expr)
     {
+        if (this.Macros.Contains(expr.Name))
+        {
+            executeBlock((this.Macros.Get(expr.Name) as Stmt.Macro).Body.Statements, new Environment(IntEnvironment));
+            return true;
+        }
+
         return IntEnvironment.Get(expr.Name);
     }
 
@@ -230,6 +237,12 @@ public class Interpreter : Expr.Visitor<System.Object>, Stmt.Visitor<string> // 
         }
         
         throw new RuntimeError("If statement condition not a boolean value");
+    }
+
+    public string VisitMacroStmt(Stmt.Macro stmt)
+    {
+        Macros.Define(stmt.Name, stmt);
+        return "";
     }
 
     object evaluate(Expr expr)

@@ -11,6 +11,7 @@ public abstract class Stmt
         R VisitRepeatStmt(Repeat stmt);
         R VisitDottedStmt(Dotted stmt);
         R VisitIfStmt(If stmt);
+        R VisitMacroStmt(Macro stmt);
     }
     
     public class Block : Stmt
@@ -136,6 +137,23 @@ public abstract class Stmt
             return visitor.VisitIfStmt(this);
         }
 
+    }
+
+    public class Macro : Stmt
+    {
+        public Lexer.Token Name;
+        public Stmt.Block Body;
+
+        public Macro(Lexer.Token name, Stmt.Block body)
+        {    
+            this.Name = name;
+            this.Body = body;
+        }
+
+        public override R Accept<R>(Visitor<R> visitor)
+        {
+            return visitor.VisitMacroStmt(this);
+        }
     }
 
     public abstract R Accept<R>(Visitor<R> visitor);
