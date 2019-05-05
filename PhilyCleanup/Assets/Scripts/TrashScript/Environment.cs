@@ -25,14 +25,15 @@ public class Environment
         throw new Interpreter.RuntimeError("Attempting to access undefined variable " + name.Literal);
     }
 
-    public void Define(Lexer.Token name, Object value)
+    public Environment Define(Lexer.Token name, Object value)
     {
         if (!values.ContainsKey(name.Literal))
         {
             values.Add(name.Literal, value);
-            return;
+            return this;
         }
         
         values[name.Literal] = value;
+        return this;
     }
 }

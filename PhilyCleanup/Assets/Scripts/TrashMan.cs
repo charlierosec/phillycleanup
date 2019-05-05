@@ -51,12 +51,11 @@ public class TrashMan : MonoBehaviour
         {
             case "up":
                 move.y += 1;
-                var lx = new Lexer("let x = 5");
+                var lx = new Lexer("let x = 5 + 5");
                 var pr = new Parser(lx.Scan());
-                foreach (var l in lx.Scan())
-                {
-                    print(l.ToString());
-                }
+                var it = new Interpreter();
+                it.Interpret(pr.Parse());
+                print(it.IntEnvironment.Get(new Lexer.Token{Literal="x"}));
                 break;
             
             case "down":

@@ -7,6 +7,7 @@ public abstract class Stmt
         R VisitBlockStmt(Block stmt);
         R VisitExpressionStmt(Expression stmt);
         R VisitAssignStmt(Assign stmt);
+        R VisitPrintStmt(Print stmt);
         R VisitRepeatStmt(Repeat stmt);
     }
     
@@ -57,6 +58,21 @@ public abstract class Stmt
         }
     }
 
+    public class Print : Stmt
+    {
+        public Expr Expression;
+
+        public Print(Expr expr)
+        {
+            this.Expression = expr;
+        }
+
+        public override R Accept<R>(Visitor<R> visitor)
+        {
+            return visitor.VisitPrintStmt(this);
+        }
+    }
+    
     public class Repeat : Stmt
     {
         public Expr LowValue;

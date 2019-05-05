@@ -39,6 +39,9 @@ public class Lexer
             Keywords.Add("macro", Token.TokenType.MACRO);
             Keywords.Add("do", Token.TokenType.DO);
             Keywords.Add("end", Token.TokenType.END);
+            Keywords.Add("print", Token.TokenType.PRINT);
+            Keywords.Add("false", Token.TokenType.FALSE);
+            Keywords.Add("true", Token.TokenType.TRUE);
     }
     
     public class Token
@@ -52,14 +55,15 @@ public class Lexer
             
             REPEAT, COLON, IF, ELSE, 
             HASH, MACRO, EOF, DO, END,
-            LET, NEWLINE
+            PRINT,
+            LET, NEWLINE, FALSE, TRUE
         };
 
         public TokenType Type;
         public System.Object Value;
         public string Literal;
 
-        public string ToString()
+        public override string ToString()
         {
             return $"Token [{Type}]: {Literal}";
         }
@@ -67,6 +71,10 @@ public class Lexer
 
     public List<Token> Scan()
     {
+        Tokens = new List<Token>();
+        Start = 0;
+        Current = 0;
+        
         while (!isAtEnd())
         {
             Start = Current;

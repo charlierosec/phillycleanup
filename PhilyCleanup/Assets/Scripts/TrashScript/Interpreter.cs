@@ -9,9 +9,9 @@ public class Interpreter : Expr.Visitor<System.Object>, Stmt.Visitor<string> // 
         public RuntimeError(string msg) : base(msg) {}
     }
     
-    private Environment IntEnvironment = new Environment();
+    public Environment IntEnvironment = new Environment();
 
-    void interpret(List<Stmt> statements)
+    public void Interpret(List<Stmt> statements)
     {
         try
         {
@@ -30,8 +30,23 @@ public class Interpreter : Expr.Visitor<System.Object>, Stmt.Visitor<string> // 
     {
         object left = evaluate(expr.Left);
         object right = evaluate(expr.Right);
+
+        switch (expr.Operator.Type)
+        {
+            case Lexer.Token.TokenType.PLUS:
+                return (int) left + (int) right;
+            
+            case Lexer.Token.TokenType.MINUS:
+                return (int) left - (int) right;
+            
+            case Lexer.Token.TokenType.MULTIPLY:
+                return (int) left * (int) right;
+            
+            case Lexer.Token.TokenType.DIVIDE:
+                return (int) left / (int) right;
+        }
         
-        throw new NotImplementedException(); // more fun implementing stuffs
+        throw new RuntimeError($"Unknown operator '{expr.Operator.Literal}'");
     }
 
     public object VisitGroupingExpr(Expr.Grouping expr)
@@ -43,23 +58,32 @@ public class Interpreter : Expr.Visitor<System.Object>, Stmt.Visitor<string> // 
     {
         object right = evaluate(expr.Right);
 
-        switch (expr.Operator.Type)
+        if (right is int)
         {
-            case Lexer.Token.TokenType.BANG:
-                // do stuf
+            if (expr.Operator.Type == Lexer.Token.TokenType.MINUS)
+            {
+                return -1 * (int) right;
+            }
             
-            case Lexer.Token.TokenType.MINUS:
-                // do stuff
-            
-                // fall through for now because it sucks
-            default:
-                throw new RuntimeError("Invalid operator in unary expression");
+        } else if (right is bool)
+        {
+            if (expr.Operator.Type == Lexer.Token.TokenType.BANG)
+            {
+                return !((bool) right);
+            }
         }
+        
+        throw new RuntimeError($"Wrong type give for {expr.Operator.Literal} operator");
     }
 
     public object VisitVariableExpr(Expr.Variable expr)
     {
         return IntEnvironment.Get(expr.Name);
+    }
+
+    public object VisitLiteralExpr(Expr.Literal expr)
+    {
+        return expr.Value;
     }
 
     public string VisitBlockStmt(Stmt.Block stmt)
@@ -79,14 +103,23 @@ public class Interpreter : Expr.Visitor<System.Object>, Stmt.Visitor<string> // 
         object value = evaluate(stmt.Initialiser);
 
         IntEnvironment.Define(stmt.Name, value);
+        return ""; 
+    }
+
+    public string VisitPrintStmt(Stmt.Print stmt)
+    {
+        object value = evaluate(stmt.Expression);
+        Console.WriteLine(value);
+
         return "";
     }
 
     public string VisitRepeatStmt(Stmt.Repeat stmt)
     {
-        // still need to implement a repeat statement
-        // but im lazy
-        // so that's a job for 3am me
+        // we've got ourselves a low-high expression bois
+        if (stmt.LowValue != null)
+        {
+        }
         throw new NotImplementedException();
     }
 

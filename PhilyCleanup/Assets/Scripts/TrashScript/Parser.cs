@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 public class Parser
 {
@@ -38,7 +39,7 @@ public class Parser
                 Stmt stmt = statement();
                 if (stmt != null)
                 {
-                    statements.Add(statement());
+                    statements.Add(stmt);
                 }
             }
 
@@ -94,7 +95,7 @@ public class Parser
             initialiser = expression();
         }
 
-        consume("Expected new line after variable declaration", Lexer.Token.TokenType.NEWLINE);
+        consume("Expected new line after variable declaration", Lexer.Token.TokenType.NEWLINE, Lexer.Token.TokenType.EOF);
         return new Stmt.Assign(name, initialiser);
     }
 
@@ -130,13 +131,22 @@ public class Parser
 
     Expr unary()
     {
-        Lexer.Token op = previous();
-
-        Expr expr = null;
-        if (match(Lexer.Token.TokenType.LEFT_PAREN)) expr = grouping();
-            else expr = unary();
+        if (match(Lexer.Token.TokenType.LEFT_PAREN)) return grouping();
+        if (match(Lexer.Token.TokenType.BANG, Lexer.Token.TokenType.MINUS)) return new Expr.Unary(previous(), unary());
         
-        return new Expr.Unary(op, expr);
+        return primary();
+
+    }
+
+    Expr primary()
+    {
+        if (match(Lexer.Token.TokenType.FALSE)) return new Expr.Literal(false);
+        if (match(Lexer.Token.TokenType.TRUE)) return new Expr.Literal(true);
+        
+        if (match(Lexer.Token.TokenType.NUMBER)) return new Expr.Literal(int.Parse(previous().Literal));
+        if (match(Lexer.Token.TokenType.IDENTIFIER)) return new Expr.Variable(previous());
+        
+        throw new ParseError("Expecting expression");
     }
 
     Expr addition()
@@ -231,7 +241,7 @@ public class Parser
 
     bool check(Lexer.Token.TokenType type)
     {
-        if (isAtEnd())
+        if (isAtEnd() && type != Lexer.Token.TokenType.EOF)
         {
             return false;
         }
