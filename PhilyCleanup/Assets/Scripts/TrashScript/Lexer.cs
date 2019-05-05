@@ -38,8 +38,10 @@ public class Lexer
             Keywords.Add("else", Token.TokenType.ELSE);
             Keywords.Add("macro", Token.TokenType.MACRO);
             Keywords.Add("do", Token.TokenType.DO);
+            Keywords.Add("to", Token.TokenType.TO);
             Keywords.Add("end", Token.TokenType.END);
             Keywords.Add("print", Token.TokenType.PRINT);
+            Keywords.Add("player", Token.TokenType.PLAYER);
             Keywords.Add("false", Token.TokenType.FALSE);
             Keywords.Add("true", Token.TokenType.TRUE);
     }
@@ -57,7 +59,7 @@ public class Lexer
             
             REPEAT, COLON, IF, ELSE, 
             HASH, MACRO, EOF, DO, END,
-            PRINT,
+            PRINT, PLAYER, DOT, TO,
             LET, NEWLINE, FALSE, TRUE
         };
 
@@ -134,10 +136,14 @@ public class Lexer
                 addToken(Token.TokenType.COLON, ":");
                 break;
             
+            case '.':
+                addToken(Token.TokenType.DOT, ".");
+                break;
+            
             case '=':
                 addToken(Token.TokenType.EQUAL, "=");
                 break;
-            
+
             case '<':
                 if (peek() == '=')
                 {

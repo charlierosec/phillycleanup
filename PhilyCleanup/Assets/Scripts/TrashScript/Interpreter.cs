@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
+using UnityEngine;
 
 public class Interpreter : Expr.Visitor<System.Object>, Stmt.Visitor<string> // this string doesn't actually matter, but we can't use Void in C#
 {
@@ -10,6 +12,7 @@ public class Interpreter : Expr.Visitor<System.Object>, Stmt.Visitor<string> // 
     }
     
     public Environment IntEnvironment = new Environment();
+    public UnityEngine.Object Player;
 
     public void Interpret(List<Stmt> statements)
     {
@@ -162,6 +165,64 @@ public class Interpreter : Expr.Visitor<System.Object>, Stmt.Visitor<string> // 
         }
 
         return "";
+    }
+
+    string intToDir(int num)
+    {
+        switch (num)
+        {
+            case 0:
+                return "up";
+            
+            case 1:
+                return "right";
+            
+            case 2:
+                return "down";
+            
+            case 3:
+                return "left";
+        }
+
+        return "";
+    }
+    
+    public string VisitDottedStmt(Stmt.Dotted stmt)
+    {
+        var pl = GameObject.FindGameObjectWithTag("Player").GetComponent<TrashMan>();
+        if (pl != null)
+        {
+            switch (stmt.Operation.Literal)
+            {
+                case "move":
+                    var arg = evaluate(stmt.Arguments);
+                    if (arg is int)
+                    {
+                        pl.Move(intToDir((int)arg));
+                    }
+                    break;
+                
+                default:
+                    throw new RuntimeError("Unknown operation on player");
+            }
+        }
+
+        return "";
+    }
+
+    public string VisitIfStmt(Stmt.If stmt)
+    {
+        var cond = evaluate(stmt.Condition);
+
+        if (cond is bool)
+        {
+            if ((bool) cond)
+            {
+                execute(stmt.WhenTrue);
+            } else execute(stmt.WhenFalse);
+        }
+        
+        throw new RuntimeError("If statement condition not a boolean value");
     }
 
     object evaluate(Expr expr)

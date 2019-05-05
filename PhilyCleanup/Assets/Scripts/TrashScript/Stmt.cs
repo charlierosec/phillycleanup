@@ -9,6 +9,8 @@ public abstract class Stmt
         R VisitAssignStmt(Assign stmt);
         R VisitPrintStmt(Print stmt);
         R VisitRepeatStmt(Repeat stmt);
+        R VisitDottedStmt(Dotted stmt);
+        R VisitIfStmt(If stmt);
     }
     
     public class Block : Stmt
@@ -97,6 +99,43 @@ public abstract class Stmt
         {
             return visitor.VisitRepeatStmt(this);
         }
+    }
+
+    public class Dotted : Stmt
+    {
+        public Lexer.Token Operation;
+        public Expr Arguments;
+
+        public Dotted(Lexer.Token op, Expr arg)
+        {
+            this.Operation = op;
+            this.Arguments = arg;
+        }
+
+        public override R Accept<R>(Visitor<R> visitor)
+        {
+            return visitor.VisitDottedStmt(this);
+        }
+    }
+
+    public class If : Stmt
+    {
+        public Expr Condition;
+        public Stmt WhenTrue;
+        public Stmt WhenFalse;
+
+        public If(Expr cond, Stmt tr, Stmt fl)
+        {
+            this.Condition = cond;
+            this.WhenTrue = tr;
+            this.WhenFalse = fl;
+        }
+        
+        public override R Accept<R>(Visitor<R> visitor)
+        {
+            return visitor.VisitIfStmt(this);
+        }
+
     }
 
     public abstract R Accept<R>(Visitor<R> visitor);

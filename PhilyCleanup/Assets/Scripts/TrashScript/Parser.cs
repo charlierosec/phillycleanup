@@ -59,6 +59,8 @@ public class Parser
             if (match(Lexer.Token.TokenType.DO)) return new Stmt.Block(block());
             if (match(Lexer.Token.TokenType.LET)) return assignment();
             if (match(Lexer.Token.TokenType.REPEAT)) return repeat();
+            if (match(Lexer.Token.TokenType.PLAYER)) return dotted();
+            if (match(Lexer.Token.TokenType.IF)) return ifstmt();
 
             return new Stmt.Expression(condition());
         }
@@ -81,7 +83,11 @@ public class Parser
 
         while (!check(Lexer.Token.TokenType.END) && !isAtEnd())
         {
-            statements.Add(statement());
+            var stmt = statement();
+            if (stmt != null)
+            {
+                statements.Add(stmt);
+            }
         }
 
         consume("Expected 'end' after 'do'", Lexer.Token.TokenType.END);
@@ -104,15 +110,12 @@ public class Parser
 
     Stmt repeat()
     {
-        /*
-         * TODO: implement repeat loop with condition 
-         */
         Expr left = condition();
         Expr right = null;
 
         // hey we've got a high low loop
         // also im exhausted
-        if (match(Lexer.Token.TokenType.COLON))
+        if (match(Lexer.Token.TokenType.COLON, Lexer.Token.TokenType.TO))
         {
             right = condition();
         }
@@ -127,6 +130,46 @@ public class Parser
         }
         
         return new Stmt.Repeat(left, blk);
+    }
+
+    Stmt dotted()
+    {
+        if (match(Lexer.Token.TokenType.DOT))
+        {
+            if (match(Lexer.Token.TokenType.IDENTIFIER))
+            {
+                var operation = previous();
+
+                if (match(Lexer.Token.TokenType.LEFT_PAREN))
+                {
+                    var right = arguments();
+                    return new Stmt.Dotted(operation, right);
+                }
+                
+                throw new ParseError("Expected arguments after dotted call");
+            }
+            
+            throw new ParseError("Expected identifier in dotted call");
+        }
+        
+        throw new ParseError("Expected '.' after 'Player'");
+    }
+
+    Stmt ifstmt()
+    {
+        var cond = condition();
+
+        consume("Expected 'do' after 'if'", Lexer.Token.TokenType.DO);
+        var blk = block();
+        List<Stmt> blk2 = null;
+
+        if (match(Lexer.Token.TokenType.ELSE))
+        {
+            consume("Expected 'do' after 'else'", Lexer.Token.TokenType.DO);
+            blk2 = block();
+        }
+        
+        return new Stmt.If(cond, new Stmt.Block(blk), (blk2 != null) ? new Stmt.Block(blk2) : null);
     }
 
     Expr condition()
@@ -153,6 +196,17 @@ public class Parser
         return new Expr.Grouping(expr);
     }
 
+    Expr arguments()
+    {
+        // no parameters inside
+        if (match(Lexer.Token.TokenType.RIGHT_PAREN))
+        {
+            return new Expr.Grouping(null);
+        }
+        
+        return new Expr.Grouping(grouping());
+    }
+
     Expr unary()
     {
         if (match(Lexer.Token.TokenType.LEFT_PAREN)) return grouping();
@@ -169,7 +223,7 @@ public class Parser
         
         if (match(Lexer.Token.TokenType.NUMBER)) return new Expr.Literal(int.Parse(previous().Literal));
         if (match(Lexer.Token.TokenType.IDENTIFIER)) return new Expr.Variable(previous());
-        
+
         throw new ParseError("Expecting expression");
     }
 
