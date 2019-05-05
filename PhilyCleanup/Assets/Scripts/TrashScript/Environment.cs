@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 public class Environment
 {
@@ -25,10 +26,25 @@ public class Environment
         throw new Interpreter.RuntimeError("Attempting to access undefined variable " + name.Literal);
     }
 
+    public bool Contains(Lexer.Token name)
+    {
+        return values.ContainsKey(name.Literal);
+    }
+
     public Environment Define(Lexer.Token name, Object value)
     {
         if (!values.ContainsKey(name.Literal))
         {
+            var encl = Enclosing;
+            while (encl != null)
+            {
+                if (encl.Contains(name))
+                {
+                    encl.Define(name, value);
+                    break;
+                }
+            }
+
             values.Add(name.Literal, value);
             return this;
         }
