@@ -50,8 +50,10 @@ public class Lexer
         {
             NUMBER, IDENTIFIER,
             PLUS, MINUS, MULTIPLY, DIVIDE,
-            EQUAL, LEFT_PAREN, RIGHT_PAREN,
-            BANG,
+            EQUAL, BANG, BANG_EQUAL,
+            LESS_EQUAL, LESS,
+            GREATER_EQUAL, GREATER,
+            LEFT_PAREN, RIGHT_PAREN,
             
             REPEAT, COLON, IF, ELSE, 
             HASH, MACRO, EOF, DO, END,
@@ -134,6 +136,38 @@ public class Lexer
             
             case '=':
                 addToken(Token.TokenType.EQUAL, "=");
+                break;
+            
+            case '<':
+                if (peek() == '=')
+                {
+                    addToken(Token.TokenType.LESS_EQUAL, "<=");
+                    advance();
+                } else addToken(Token.TokenType.LESS, "<");
+                break;
+            
+            case '>':
+                if (peek() == '=')
+                {
+                    addToken(Token.TokenType.GREATER_EQUAL, ">=");
+                    advance();
+                } else addToken(Token.TokenType.GREATER, ">");
+                break;
+
+            case '(':
+                addToken(Token.TokenType.LEFT_PAREN, "(");
+                break;
+            
+            case ')':
+                addToken(Token.TokenType.RIGHT_PAREN, ")");
+                break;
+            
+            case '!':
+                if (peek() == '=')
+                {
+                    addToken(Token.TokenType.BANG_EQUAL, "!=");
+                    advance();
+                } else addToken(Token.TokenType.BANG, "!");
                 break;
             
             default:

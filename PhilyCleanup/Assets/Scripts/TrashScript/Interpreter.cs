@@ -44,6 +44,24 @@ public class Interpreter : Expr.Visitor<System.Object>, Stmt.Visitor<string> // 
             
             case Lexer.Token.TokenType.DIVIDE:
                 return (int) left / (int) right;
+            
+            case Lexer.Token.TokenType.EQUAL:
+                return (int) left == (int) right;
+            
+            case Lexer.Token.TokenType.BANG_EQUAL:
+                return (int) left != (int) right;
+            
+            case Lexer.Token.TokenType.LESS:
+                return (int) left < (int) right;
+            
+            case Lexer.Token.TokenType.LESS_EQUAL:
+                return (int) left <= (int) right;
+            
+            case Lexer.Token.TokenType.GREATER:
+                return (int) left > (int) right;
+            
+            case Lexer.Token.TokenType.GREATER_EQUAL:
+                return (int) left >= (int) right;
         }
         
         throw new RuntimeError($"Unknown operator '{expr.Operator.Literal}'");
@@ -131,8 +149,19 @@ public class Interpreter : Expr.Visitor<System.Object>, Stmt.Visitor<string> // 
             
             throw new RuntimeError("Invalid values for repeat loop");
         }
-        
-        throw new NotImplementedException();
+        else // this guy's got a condition
+        {
+            var cond = evaluate(stmt.Condition);
+            if (cond is bool)
+            {
+                while ((bool)evaluate(stmt.Condition))
+                {
+                    execute(stmt.Block);
+                }
+            }
+        }
+
+        return "";
     }
 
     object evaluate(Expr expr)

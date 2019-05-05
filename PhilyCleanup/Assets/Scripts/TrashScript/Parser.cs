@@ -60,7 +60,7 @@ public class Parser
             if (match(Lexer.Token.TokenType.LET)) return assignment();
             if (match(Lexer.Token.TokenType.REPEAT)) return repeat();
 
-            return new Stmt.Expression(expression());
+            return new Stmt.Expression(condition());
         }
         catch (ParseError e)
         {
@@ -95,7 +95,7 @@ public class Parser
         Expr initialiser = null;
         if (match(Lexer.Token.TokenType.EQUAL))
         {
-            initialiser = expression();
+            initialiser = condition();
         }
 
         consume("Expected new line after variable declaration", Lexer.Token.TokenType.NEWLINE, Lexer.Token.TokenType.EOF);
@@ -107,25 +107,47 @@ public class Parser
         /*
          * TODO: implement repeat loop with condition 
          */
-        Expr left = expression();
-        consume("Expected ':' in repeat", Lexer.Token.TokenType.COLON); 
-        Expr right = expression();
+        Expr left = condition();
+        Expr right = null;
+
+        // hey we've got a high low loop
+        // also im exhausted
+        if (match(Lexer.Token.TokenType.COLON))
+        {
+            right = condition();
+        }
 
         Stmt.Block blk = null;
         if (match(Lexer.Token.TokenType.DO)) blk = new Stmt.Block(block());
         else throw new ParseError("Expected block after repeat statement");
+
+        if (right != null)
+        {
+            return new Stmt.Repeat(left, right, blk);
+        }
         
-        return new Stmt.Repeat(left, right, blk);
+        return new Stmt.Repeat(left, blk);
     }
 
-    Expr expression()
+    Expr condition()
     {
-        return addition();
+        Expr left = addition();
+
+        if (match(Lexer.Token.TokenType.EQUAL, Lexer.Token.TokenType.BANG_EQUAL,
+            Lexer.Token.TokenType.LESS, Lexer.Token.TokenType.LESS_EQUAL,
+            Lexer.Token.TokenType.GREATER, Lexer.Token.TokenType.GREATER_EQUAL))
+        {
+            Lexer.Token op = previous();
+            Expr right = addition();
+            return new Expr.Binary(left, op, right);
+        }
+
+        return left;
     }
 
     Expr grouping()
     {
-        Expr expr = expression();
+        Expr expr = condition();
 
         consume("Expected ')' after '('", Lexer.Token.TokenType.RIGHT_PAREN);
         return new Expr.Grouping(expr);

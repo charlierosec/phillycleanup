@@ -31,7 +31,7 @@ public class Environment
         return values.ContainsKey(name.Literal);
     }
 
-    public Environment Define(Lexer.Token name, Object value)
+    public void Define(Lexer.Token name, Object value)
     {
         if (!values.ContainsKey(name.Literal))
         {
@@ -46,10 +46,8 @@ public class Environment
             }
 
             values.Add(name.Literal, value);
-            return this;
         }
         
         values[name.Literal] = value;
-        return this;
     }
 }
