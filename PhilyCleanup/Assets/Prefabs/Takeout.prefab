@@ -10,7 +10,7 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -131,6 +131,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 8724744973975865161, guid: 104a6156a4daf4f0ab07d8ad07c600f8, type: 3}
+    - {fileID: 8058949580563275350, guid: 104a6156a4daf4f0ab07d8ad07c600f8, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 104a6156a4daf4f0ab07d8ad07c600f8, type: 3}
 --- !u!1 &298926875685823990 stripped
 GameObject:
