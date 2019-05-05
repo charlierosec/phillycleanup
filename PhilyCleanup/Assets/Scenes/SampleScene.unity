@@ -315,8 +315,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 376.5, y: -332}
-  m_SizeDelta: {x: 753, y: 30}
+  m_AnchoredPosition: {x: 287.7, y: -271.7}
+  m_SizeDelta: {x: 575.4, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &294840708
 MonoBehaviour:
@@ -577,7 +577,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   button: {fileID: 800607494}
   inputField: {fileID: 1528534885}
-  outputField: {fileID: 294840708}
+  outputField: {fileID: 0}
   ToEdit: Hello World
   x: 10
   y: 10
@@ -696,7 +696,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 321.68, y: -341.18}
+  m_AnchoredPosition: {x: 321.68, y: -280}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 3.010495, y: 0.19395612}
 --- !u!114 &800607494
@@ -1045,8 +1045,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 376.5, y: 15.001}
-  m_SizeDelta: {x: 753, y: 664}
+  m_AnchoredPosition: {x: 287.7, y: 15.3}
+  m_SizeDelta: {x: 575.4, y: 541.4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1528534885
 MonoBehaviour:
